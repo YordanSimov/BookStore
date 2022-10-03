@@ -45,11 +45,6 @@ namespace ProjectDK.Controllers
 
         public IActionResult Add(AuthorRequest author)
         {
-            //if (author == null) return BadRequest(author);
-
-            //var authorExists = authorService.GetByName(author.Name);
-            //if (authorExists != null) return BadRequest("Author already exists");
-            // return Ok(authorService.Add(author));
             var result = authorService.Add(author);
 
             try

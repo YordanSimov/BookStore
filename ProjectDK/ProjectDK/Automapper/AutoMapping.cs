@@ -10,7 +10,6 @@ namespace ProjectDK.Automapper
         {
             CreateMap<AuthorRequest, Author>();
             CreateMap<BookRequest, Book>();
-           // CreateMap<Author, AddAuthorResponse>();
         }
     }
 }
