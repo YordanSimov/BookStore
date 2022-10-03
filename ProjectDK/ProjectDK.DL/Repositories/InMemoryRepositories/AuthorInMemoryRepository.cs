@@ -3,14 +3,13 @@ using ProjectDK.Models.Models;
 
 namespace ProjectDK.DL.Repositories.InMemoryRepositories
 {
-    public class AuthorInMemoryRepository : IAuthorInMemoryRepository
+    public class AuthorInMemoryRepository : IAuthorRepository
     {
         private static List<Author> authors = new List<Author>()
         {
-            new Author(1,"Pesho",20,"pesho123"),
-            new Author(2,"Gosho",30,"gosho123"),
-            new Author(3,"Kocio",40,"kocio123"),
-
+            new Author(){Id = 1,Name = "Pesho", Age = 20, Nickname = "pesho123"},
+            new Author(){Id = 2,Name = "Gosho", Age = 30, Nickname = "gosho123"},
+            new Author(){Id = 3,Name = "Kocio", Age = 40, Nickname = "kocio123"}
         };
         public Author Add(Author author)
         {
@@ -33,13 +32,21 @@ namespace ProjectDK.DL.Repositories.InMemoryRepositories
             }
             var author = authors.FirstOrDefault(x => x.Id == authorId);
 
-            authors.Remove(author);
+            if (author != null)
+            {
+                authors.Remove(author);
+            }
             return author;
         }
 
         public IEnumerable<Author> GetAll()
         {
             return authors;
+        }
+
+        public Author? GetByName(string name)
+        {
+            return authors.FirstOrDefault(x => x.Name == name);
         }
 
         public Author? GetById(int id)

@@ -1,9 +1,9 @@
-﻿namespace ProjectDK.Models.Models
+﻿namespace ProjectDK.Models.Requests
 {
-    public class Book
+    public class BookRequest
     {
         public int Id { get; init; }
-        
+
         public string Title { get; init; }
 
         public int AuthorId { get; init; }

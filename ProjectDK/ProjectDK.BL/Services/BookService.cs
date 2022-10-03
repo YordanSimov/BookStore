@@ -1,24 +1,39 @@
-﻿using ProjectDK.BL.Interfaces;
+﻿using AutoMapper;
+using ProjectDK.BL.Interfaces;
 using ProjectDK.DL.Interfaces;
 using ProjectDK.Models.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ProjectDK.Models.Requests;
+using ProjectDK.Models.Responses;
+using System.Net;
 
 namespace ProjectDK.BL.Services
 {
     public class BookService : IBookService
     {
-        private readonly IBookInMemoryRepository bookInMemoryRepository;
-        public BookService(IBookInMemoryRepository bookInMemoryRepository)
+        private readonly IBookRepository bookInMemoryRepository;
+        private readonly IMapper mapper;
+        public BookService(IBookRepository bookInMemoryRepository, IMapper mapper)
         {
             this.bookInMemoryRepository = bookInMemoryRepository;
+            this.mapper = mapper;
         }
-        public Book Add(Book book)
+        public BookResponse Add(BookRequest bookRequest)
         {
-           return bookInMemoryRepository.Add(book);
+            var bookCheck = bookInMemoryRepository.GetById(bookRequest.Id);
+            if (bookCheck != null) return new BookResponse()
+            {
+                HttpStatusCode = HttpStatusCode.BadRequest,
+                Message = "Book already exists",
+            };
+
+            var book = mapper.Map<Book>(bookRequest);
+            var result = bookInMemoryRepository.Add(book);
+
+           return new BookResponse()
+           {
+               HttpStatusCode = HttpStatusCode.OK,
+               Book = result
+           };
         }
 
         public Book? Delete(int id)
@@ -36,9 +51,22 @@ namespace ProjectDK.BL.Services
             return bookInMemoryRepository.GetById(id);
         }
 
-        public void Update(Book book)
+        public BookResponse Update(BookRequest bookRequest)
         {
-             bookInMemoryRepository.Update(book);
+            var bookCheck = bookInMemoryRepository.GetById(bookRequest.Id);
+            if (bookCheck == null) return new BookResponse()
+            {
+                HttpStatusCode = HttpStatusCode.NotFound,
+                Message = "Book does not exist.",
+            };
+            var book = mapper.Map<Book>(bookRequest);
+            bookInMemoryRepository.Update(book);
+
+            return new BookResponse()
+            {
+                HttpStatusCode = HttpStatusCode.OK,
+                Book = book,
+            };
         }
     }
 }
