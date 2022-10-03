@@ -1,6 +1,6 @@
-﻿namespace ProjectDK.Models.Models
+﻿namespace ProjectDK.Models.Requests
 {
-    public class Person
+    public class AuthorRequest
     {
         public int Id { get; set; }
 
@@ -9,5 +9,7 @@
         public int Age { get; set; }
 
         public DateTime DateOfBirth { get; set; }
+
+        public string Nickname { get; set; }
     }
 }

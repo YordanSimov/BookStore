@@ -3,14 +3,13 @@ using ProjectDK.Models.Models;
 
 namespace ProjectDK.DL.Repositories.InMemoryRepositories
 {
-    public class PersonInMemoryRepository : IPersonInMemoryRepository
+    public class PersonInMemoryRepository : IPersonRepository
     {
         private static List<Person> users = new List<Person>()
         {
-            new Person(1,"Pesho",20),
-            new Person(2,"Gosho",30),
-            new Person(3,"Kocio",40),
-
+            new Person(){Id = 1,Name = "Pesho",Age = 20},
+            new Person(){Id = 2,Name = "Gosho",Age = 30},
+            new Person(){Id = 3,Name = "Kocio",Age = 40 },
         };
 
         public IEnumerable<Person> GetAll()
@@ -54,7 +53,10 @@ namespace ProjectDK.DL.Repositories.InMemoryRepositories
             }
             var user = users.FirstOrDefault(x => x.Id == userId);
 
-            users.Remove(user);
+            if (user != null)
+            {
+                users.Remove(user);
+            }
             return user;
         }
     }

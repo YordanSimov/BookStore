@@ -1,9 +1,6 @@
 ﻿using ProjectDK.Models.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ProjectDK.Models.Requests;
+using ProjectDK.Models.Responses;
 
 namespace ProjectDK.BL.Interfaces
 {
@@ -13,9 +10,11 @@ namespace ProjectDK.BL.Interfaces
 
         Author? GetById(int id);
 
-        Author Add(Author input);
+        Author? GetByName(string name);
 
-        void Update(Author input);
+        AddAuthorResponse Add(AuthorRequest input);
+
+        UpdateAuthorResponse Update(AuthorRequest input);
 
         Author? Delete(int id);
     }

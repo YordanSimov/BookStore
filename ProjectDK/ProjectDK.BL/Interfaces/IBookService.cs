@@ -1,9 +1,6 @@
 ﻿using ProjectDK.Models.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ProjectDK.Models.Requests;
+using ProjectDK.Models.Responses;
 
 namespace ProjectDK.BL.Interfaces
 {
@@ -13,9 +10,9 @@ namespace ProjectDK.BL.Interfaces
 
         Book? GetById(int id);
 
-        Book Add(Book input);
+        BookResponse Add(BookRequest input);
 
-        void Update(Book input);
+        BookResponse Update(BookRequest input);
 
         Book? Delete(int id);
     }

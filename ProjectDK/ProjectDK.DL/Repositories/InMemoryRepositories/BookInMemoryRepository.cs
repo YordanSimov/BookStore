@@ -3,14 +3,13 @@ using ProjectDK.Models.Models;
 
 namespace ProjectDK.DL.Repositories.InMemoryRepositories
 {
-    public class BookInMemoryRepository : IBookInMemoryRepository
+    public class BookInMemoryRepository : IBookRepository
     {
         private static List<Book> books = new List<Book>()
         {
-            new Book(1,"1984",3),
-            new Book(2,"Brave new world",2),
-            new Book(3,"To kill a mockingbird",1),
-
+            new Book(){Id = 1,Title = "1984", AuthorId = 3 },
+            new Book(){Id = 2,Title = "Brave new world", AuthorId= 2 },
+            new Book(){Id = 3,Title = "To kill a mockingbird",AuthorId = 1 },
         };
         public Book Add(Book book)
         {
@@ -33,7 +32,10 @@ namespace ProjectDK.DL.Repositories.InMemoryRepositories
             }
             var book = books.FirstOrDefault(x => x.Id == bookId);
 
-            books.Remove(book);
+            if (book != null)
+            {
+                books.Remove(book);
+            }
             return book;
         }
 

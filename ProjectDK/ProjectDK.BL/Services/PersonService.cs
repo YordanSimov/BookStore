@@ -6,9 +6,9 @@ namespace ProjectDK.BL.Services
 {
     public class PersonService : IPersonService
     {
-        private readonly IPersonInMemoryRepository personInMemoryRepository;
+        private readonly IPersonRepository personInMemoryRepository;
 
-        public PersonService(IPersonInMemoryRepository personInMemoryRepository)
+        public PersonService(IPersonRepository personInMemoryRepository)
         {
             this.personInMemoryRepository = personInMemoryRepository;
         }

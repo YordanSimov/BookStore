@@ -2,7 +2,7 @@
 
 namespace ProjectDK.DL.Interfaces
 {
-    public interface IPersonInMemoryRepository : IRepository<Person>
+    public interface IBookRepository : IRepository<Book>
     {
 
     }

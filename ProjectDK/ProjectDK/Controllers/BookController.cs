@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProjectDK.BL.Interfaces;
+using ProjectDK.BL.Services;
 using ProjectDK.Models.Models;
+using ProjectDK.Models.Requests;
+using System.Net;
 
 namespace ProjectDK.Controllers
 {
@@ -20,32 +23,70 @@ namespace ProjectDK.Controllers
         }
 
         [HttpGet(nameof(GetAll))]
-        public IEnumerable<Book> GetAll()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult GetAll()
         {
-            return bookService.GetAll();
+            if (bookService.GetAll().Count() < 0)
+            {
+                return NotFound("There aren't any books in the collection");
+            }
+            return Ok(bookService.GetAll());
         }
         [HttpPost(nameof(Add))]
-        public Book? Add(Book author)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult Add(BookRequest book)
         {
-            return bookService.Add(author);
+            var result = bookService.Add(book);
+
+            if (result.HttpStatusCode == HttpStatusCode.BadRequest)
+                return BadRequest(result);
+
+            return Ok(result);
         }
 
         [HttpGet(nameof(GetById))]
-        public Book? GetById(int id)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult GetById(int id)
         {
-            return bookService.GetById(id);
+            if (id <= 0) return BadRequest("Id must be greater than 0");
+            var result = bookService.GetById(id);
+
+            if (result == null) return NotFound(id);
+
+            return Ok(result);
         }
 
         [HttpPut(nameof(Update))]
-        public void Update(Book author)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+
+        public IActionResult Update(BookRequest book)
         {
-            bookService.Update(author);
+            if (book == null) return BadRequest("Book can't be null");
+
+            var result = bookService.Update(book);
+
+            if (result.HttpStatusCode == HttpStatusCode.NotFound)
+                return NotFound(result);
+
+            return Ok(result);
         }
 
         [HttpDelete(nameof(Delete))]
-        public Book? Delete(int id)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+
+        public IActionResult Delete(int id)
         {
-            return bookService.Delete(id);
+            if (id <= 0) return BadRequest("Id must be greater than 0");
+
+            var result = bookService.Delete(id);
+            return result == null ? NotFound(id) : Ok(result);
         }
     }
 }

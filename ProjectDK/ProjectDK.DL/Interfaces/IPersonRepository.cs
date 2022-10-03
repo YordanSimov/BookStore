@@ -2,7 +2,8 @@
 
 namespace ProjectDK.DL.Interfaces
 {
-    public interface IAuthorInMemoryRepository : IRepository<Author>
+    public interface IPersonRepository : IRepository<Person>
     {
+
     }
 }
