@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ProjectDK.DL\ProjectDK.DL.csproj" />
-    <ProjectReference Include="..\ProjectDK.Models\ProjectDK.Models.csproj" />
   </ItemGroup>
 
 </Project>

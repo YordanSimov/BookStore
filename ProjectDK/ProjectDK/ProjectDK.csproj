@@ -13,7 +13,6 @@
   <ItemGroup>
     <ProjectReference Include="..\ProjectDK.BL\ProjectDK.BL.csproj" />
     <ProjectReference Include="..\ProjectDK.DL\ProjectDK.DL.csproj" />
-    <ProjectReference Include="..\ProjectDK.Models\ProjectDK.Models.csproj" />
   </ItemGroup>
 
 </Project>
