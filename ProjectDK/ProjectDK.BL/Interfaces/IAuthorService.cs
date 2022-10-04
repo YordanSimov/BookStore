@@ -17,5 +17,7 @@ namespace ProjectDK.BL.Interfaces
         UpdateAuthorResponse Update(AuthorRequest input);
 
         Author? Delete(int id);
+
+        bool AddRange(IEnumerable<Author> addAuthors);
     }
 }
