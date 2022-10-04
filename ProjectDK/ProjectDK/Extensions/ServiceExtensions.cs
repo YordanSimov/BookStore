@@ -9,9 +9,6 @@ namespace ProjectDK.Extensions
     {
         public static IServiceCollection RegisterRepositories(this IServiceCollection services)
         {
-           // services.AddSingleton<IPersonRepository, PersonInMemoryRepository>();
-           // services.AddSingleton<IAuthorRepository, AuthorInMemoryRepository>();
-           // services.AddSingleton<IBookRepository, BookInMemoryRepository>();
             services.AddSingleton<IAuthorRepository, AuthorRepository>();
             services.AddSingleton<IBookRepository, BookRepository>();
             services.AddSingleton<IPersonRepository, PersonRepository>();
