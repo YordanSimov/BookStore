@@ -1,9 +1,8 @@
-﻿using ProjectDK.DL.Interfaces;
-using ProjectDK.Models.Models;
+﻿using ProjectDK.Models.Models;
 
 namespace ProjectDK.DL.Repositories.InMemoryRepositories
 {
-    public class PersonInMemoryRepository : IPersonRepository
+    public class PersonInMemoryRepository
     {
         private static List<Person> users = new List<Person>()
         {
@@ -12,7 +11,7 @@ namespace ProjectDK.DL.Repositories.InMemoryRepositories
             new Person(){Id = 3,Name = "Kocio",Age = 40 },
         };
 
-        public IEnumerable<Person> GetAll()
+        public async Task<IEnumerable<Person>> GetAll()
         {
             return users;
         }

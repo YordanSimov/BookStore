@@ -10,24 +10,36 @@ namespace ProjectDK.BL.Services
 {
     public class BookService : IBookService
     {
-        private readonly IBookRepository bookInMemoryRepository;
+        private readonly IBookRepository bookRepository;
+        private readonly IAuthorRepository authorRepository;
         private readonly IMapper mapper;
-        public BookService(IBookRepository bookInMemoryRepository, IMapper mapper)
+        public BookService(IBookRepository bookInMemoryRepository, IMapper mapper, IAuthorRepository authorRepository)
         {
-            this.bookInMemoryRepository = bookInMemoryRepository;
+            this.bookRepository = bookInMemoryRepository;
             this.mapper = mapper;
+            this.authorRepository = authorRepository;
         }
-        public BookResponse Add(BookRequest bookRequest)
+        public async Task<BookResponse> Add(BookRequest bookRequest)
         {
-            var bookCheck = bookInMemoryRepository.GetById(bookRequest.Id);
+            var bookCheck = await bookRepository.GetById(bookRequest.Id);
+            var authorCheck = await authorRepository.GetById(bookRequest.AuthorId);
             if (bookCheck != null) return new BookResponse()
             {
                 HttpStatusCode = HttpStatusCode.BadRequest,
                 Message = "Book already exists",
             };
 
+            if (authorCheck == null)
+            {
+                return new BookResponse()
+                {
+                    HttpStatusCode = HttpStatusCode.BadRequest,
+                    Message = "Author does not exist",
+                };
+            }
+
             var book = mapper.Map<Book>(bookRequest);
-            var result = bookInMemoryRepository.Add(book);
+            var result = await bookRepository.Add(book);
 
            return new BookResponse()
            {
@@ -36,31 +48,31 @@ namespace ProjectDK.BL.Services
            };
         }
 
-        public Book? Delete(int id)
+        public async Task<Book?> Delete(int id)
         {
-            return bookInMemoryRepository.Delete(id);
+            return await bookRepository.Delete(id);
         }
 
-        public IEnumerable<Book> GetAll()
+        public async Task<IEnumerable<Book>> GetAll()
         {
-            return bookInMemoryRepository.GetAll();
+            return await bookRepository.GetAll();
         }
 
-        public Book? GetById(int id)
+        public async Task<Book?> GetById(int id)
         {
-            return bookInMemoryRepository.GetById(id);
+            return await bookRepository.GetById(id);
         }
 
-        public BookResponse Update(BookRequest bookRequest)
+        public async Task<BookResponse> Update(BookRequest bookRequest)
         {
-            var bookCheck = bookInMemoryRepository.GetById(bookRequest.Id);
+            var bookCheck = await bookRepository.GetById(bookRequest.Id);
             if (bookCheck == null) return new BookResponse()
             {
                 HttpStatusCode = HttpStatusCode.NotFound,
                 Message = "Book does not exist.",
             };
             var book = mapper.Map<Book>(bookRequest);
-            bookInMemoryRepository.Update(book);
+            await bookRepository.Update(book);
 
             return new BookResponse()
             {

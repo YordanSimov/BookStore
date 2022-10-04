@@ -1,9 +1,8 @@
-﻿using ProjectDK.DL.Interfaces;
-using ProjectDK.Models.Models;
+﻿using ProjectDK.Models.Models;
 
 namespace ProjectDK.DL.Repositories.InMemoryRepositories
 {
-    public class BookInMemoryRepository : IBookRepository
+    public class BookInMemoryRepository
     {
         private static List<Book> books = new List<Book>()
         {
@@ -39,7 +38,7 @@ namespace ProjectDK.DL.Repositories.InMemoryRepositories
             return book;
         }
 
-        public IEnumerable<Book> GetAll()
+        public async Task<IEnumerable<Book>> GetAll()
         {
             return books;
         }

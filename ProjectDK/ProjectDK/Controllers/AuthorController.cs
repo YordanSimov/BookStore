@@ -29,9 +29,9 @@ namespace ProjectDK.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
 
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            if (authorService.GetAll().Count() < 0)
+            if ((await authorService.GetAll()).Count() < 0)
             {
                 return NotFound("There aren't any authors in the collection");
             }
@@ -39,16 +39,16 @@ namespace ProjectDK.Controllers
             _logger.LogWarning("Warning test");
             _logger.LogError("Error test");
             _logger.LogCritical("Critical test");
-            return Ok(authorService.GetAll());
+            return Ok(await authorService.GetAll());
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost(nameof(Add))]
 
-        public IActionResult Add(AuthorRequest author)
+        public async Task<IActionResult> Add(AuthorRequest author)
         {
-            var result = authorService.Add(author);
+            var result = await authorService.Add(author);
 
             try
             {
@@ -65,14 +65,14 @@ namespace ProjectDK.Controllers
         [HttpPost(nameof(AddAuthorsRange))]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult AddAuthorsRange([FromBody] AddAuthorsRequest addAuthors)
+        public async Task<IActionResult> AddAuthorsRange([FromBody] AddAuthorsRequest addAuthors)
         {
             if (addAuthors == null || !addAuthors.Authors.Any())
                 return BadRequest(addAuthors);
 
             var authors = mapper.Map<IEnumerable<Author>>(addAuthors.Authors);
 
-            var result = authorService.AddRange(authors);
+            var result = await authorService.AddRange(authors);
             if (!result) return BadRequest(result);
 
             return Ok(result);
@@ -83,7 +83,7 @@ namespace ProjectDK.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
 
-        public IActionResult GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
             try
             {
@@ -95,7 +95,7 @@ namespace ProjectDK.Controllers
                 _logger.LogError(ex.Message);
             }
 
-            var result = authorService.GetById(id);
+            var result = await authorService.GetById(id);
 
             if (result == null) return NotFound(id);
 
@@ -107,7 +107,7 @@ namespace ProjectDK.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
 
-        public IActionResult Update(AuthorRequest author)
+        public async Task<IActionResult> Update(AuthorRequest author)
         {
             try
             {
@@ -119,7 +119,7 @@ namespace ProjectDK.Controllers
                 _logger.LogError(ex.Message);
             }
 
-            var result = authorService.Update(author);
+            var result = await authorService.Update(author);
 
             if (result.HttpStatusCode == HttpStatusCode.NotFound)
                 return NotFound(result);
@@ -130,7 +130,7 @@ namespace ProjectDK.Controllers
         [HttpDelete(nameof(Delete))]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
@@ -141,7 +141,7 @@ namespace ProjectDK.Controllers
                 _logger.LogError(ex.Message);
             }
 
-            var result = authorService.Delete(id);
+            var result = await authorService.Delete(id);
             return result == null ? NotFound(id) : Ok(result);
         }
     }

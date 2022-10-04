@@ -1,3 +1,5 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using ProjectDK.Extensions;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
@@ -9,6 +11,9 @@ var logger = new LoggerConfiguration()
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.AddSerilog(logger);
+
+builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
+builder.Services.AddValidatorsFromAssemblyContaining(typeof(Program));
 
 // Add services to the container.
 builder.Services.RegisterRepositories().RegisterServices().AddAutoMapper(typeof(Program));

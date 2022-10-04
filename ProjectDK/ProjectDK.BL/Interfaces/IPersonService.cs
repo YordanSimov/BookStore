@@ -4,14 +4,14 @@ namespace ProjectDK.BL.Interfaces
 {
     public interface IPersonService
     {
-        IEnumerable<Person> GetAll();
+        Task<IEnumerable<Person>> GetAll();
 
-        Person? GetById(int id);
+        Task<Person?> GetById(int id);
 
-        Person Add(Person person);
+        Task<Person> Add(Person person);
 
-        void Update(Person person);
+        Task Update(Person person);
 
-        Person? Delete(int id);
+        Task<Person?> Delete(int id);
     }
 }

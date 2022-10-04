@@ -18,32 +18,32 @@ namespace ProjectDK.Controllers
         }
 
         [HttpGet("Get")]
-        public IEnumerable<Person> Get()
+        public async Task<IEnumerable<Person>> Get()
         {
-            return personService.GetAll();
+            return await personService.GetAll();
         }
         [HttpPost(nameof(Add))]
-        public Person? Add(Person author)
+        public async Task<Person?> Add(Person author)
         {
-            return personService.Add(author);
+            return await personService.Add(author);
         }
 
         [HttpGet(nameof(GetById))]
-        public Person? GetById(int id)
+        public async Task<Person?> GetById(int id)
         {
-            return personService.GetById(id);
+            return await personService.GetById(id);
         }
 
         [HttpPut(nameof(Update))]
-        public void Update(Person author)
+        public async Task Update(Person author)
         {
-            personService.Update(author);
+            await personService.Update(author);
         }
 
         [HttpDelete(nameof(Delete))]
-        public Person? Delete(int id)
+        public async Task<Person?> Delete(int id)
         {
-            return personService.Delete(id);
+            return await personService.Delete(id);
         }
     }
 }

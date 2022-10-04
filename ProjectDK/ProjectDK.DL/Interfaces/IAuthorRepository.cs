@@ -4,7 +4,8 @@ namespace ProjectDK.DL.Interfaces
 {
     public interface IAuthorRepository : IRepository<Author>
     {
-        bool AddRange(IEnumerable<Author> authors);
-        Author? GetByName(string name);
+        Task<bool> AddRange(IEnumerable<Author> authors);
+
+        Task<Author?> GetByName(string name);
     }
 }
