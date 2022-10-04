@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using ProjectDK.BL.Interfaces;
-using ProjectDK.BL.Services;
 using ProjectDK.Models.Models;
 using ProjectDK.Models.Requests;
 using System.Net;
@@ -14,12 +14,15 @@ namespace ProjectDK.Controllers
     {
         private readonly IAuthorService authorService;
         private readonly ILogger<AuthorController> _logger;
+        private readonly IMapper mapper;
 
         public AuthorController(IAuthorService authorService,
-            ILogger<AuthorController> logger)
+            ILogger<AuthorController> logger,
+            IMapper mapper)
         {
             this.authorService = authorService;
             _logger = logger;
+            this.mapper = mapper;
         }
 
         [HttpGet(nameof(GetAll))]
@@ -52,10 +55,26 @@ namespace ProjectDK.Controllers
                 if (result.HttpStatusCode == HttpStatusCode.BadRequest)
                     throw new HttpRequestException("Bad request");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError("Bad request");
             }
+            return Ok(result);
+        }
+
+        [HttpPost(nameof(AddAuthorsRange))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult AddAuthorsRange([FromBody] AddAuthorsRequest addAuthors)
+        {
+            if (addAuthors == null || !addAuthors.Authors.Any())
+                return BadRequest(addAuthors);
+
+            var authors = mapper.Map<IEnumerable<Author>>(addAuthors.Authors);
+
+            var result = authorService.AddRange(authors);
+            if (!result) return BadRequest(result);
+
             return Ok(result);
         }
 

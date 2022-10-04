@@ -4,6 +4,7 @@ using ProjectDK.DL.Interfaces;
 using ProjectDK.Models.Models;
 using ProjectDK.Models.Requests;
 using ProjectDK.Models.Responses;
+using System.Collections.Generic;
 using System.Net;
 
 namespace ProjectDK.BL.Services
@@ -36,6 +37,11 @@ namespace ProjectDK.BL.Services
                 HttpStatusCode = HttpStatusCode.OK,
                 Author = result
             };
+        }
+
+        public bool AddRange(IEnumerable<Author> addAuthors)
+        {
+          return  authorInMemoryRepository.AddRange(addAuthors);
         }
 
         public Author? Delete(int id)
