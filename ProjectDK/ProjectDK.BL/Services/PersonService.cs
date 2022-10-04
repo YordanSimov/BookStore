@@ -12,29 +12,29 @@ namespace ProjectDK.BL.Services
         {
             this.personInMemoryRepository = personInMemoryRepository;
         }
-        public Person Add(Person person)
+        public async Task<Person> Add(Person person)
         {
-            return personInMemoryRepository.Add(person);
+            return await personInMemoryRepository.Add(person);
         }
 
-        public Person? Delete(int id)
+        public async Task<Person?> Delete(int id)
         {
-            return personInMemoryRepository.Delete(id);
+            return await personInMemoryRepository.Delete(id);
         }
 
-        public IEnumerable<Person> GetAll()
+        public async Task<IEnumerable<Person>> GetAll()
         {
-            return personInMemoryRepository.GetAll();
+            return await personInMemoryRepository.GetAll();
         }
 
-        public Person? GetById(int id)
+        public async Task<Person?> GetById(int id)
         {
-            return personInMemoryRepository.GetById(id);
+            return await personInMemoryRepository.GetById(id);
         }
 
-        public void Update(Person person)
+        public async Task Update(Person person)
         {
-            personInMemoryRepository.Update(person);
+            await personInMemoryRepository.Update(person);
         }
     }
 }

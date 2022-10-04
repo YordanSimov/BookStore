@@ -1,11 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
-using ProjectDK.DL.Interfaces;
 using ProjectDK.Models.Models;
-using System.Linq;
 
 namespace ProjectDK.DL.Repositories.InMemoryRepositories
 {
-    public class AuthorInMemoryRepository : IAuthorRepository
+    public class AuthorInMemoryRepository
     {
         private readonly ILogger<AuthorInMemoryRepository> _logger;
         private static List<Author> authors = new List<Author>()
@@ -47,7 +45,7 @@ namespace ProjectDK.DL.Repositories.InMemoryRepositories
             return author;
         }
 
-        public IEnumerable<Author> GetAll()
+        public async Task<IEnumerable<Author>> GetAll()
         {
             return authors;
         }

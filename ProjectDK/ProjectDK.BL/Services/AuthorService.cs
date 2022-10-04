@@ -4,7 +4,6 @@ using ProjectDK.DL.Interfaces;
 using ProjectDK.Models.Models;
 using ProjectDK.Models.Requests;
 using ProjectDK.Models.Responses;
-using System.Collections.Generic;
 using System.Net;
 
 namespace ProjectDK.BL.Services
@@ -13,15 +12,18 @@ namespace ProjectDK.BL.Services
     {
         private readonly IAuthorRepository authorInMemoryRepository;
         private readonly IMapper mapper;
+        private readonly IBookRepository bookRepository;
 
-        public AuthorService(IAuthorRepository authorInMemoryRepository, IMapper mapper)
+
+        public AuthorService(IAuthorRepository authorInMemoryRepository, IMapper mapper, IBookRepository bookRepository)
         {
             this.authorInMemoryRepository = authorInMemoryRepository;
             this.mapper = mapper;
+            this.bookRepository = bookRepository;
         }
-        public AddAuthorResponse Add(AuthorRequest authorRequest)
+        public async Task<AddAuthorResponse> Add(AuthorRequest authorRequest)
         {
-            var authorCheck = authorInMemoryRepository.GetByName(authorRequest.Name);
+            var authorCheck = await authorInMemoryRepository.GetByName(authorRequest.Name);
             if (authorCheck != null)
             {
                 return new AddAuthorResponse()
@@ -31,42 +33,46 @@ namespace ProjectDK.BL.Services
                 };
             }
             var author = mapper.Map<Author>(authorRequest);
-            var result = authorInMemoryRepository.Add(author);
+            var result = await authorInMemoryRepository.Add(author);
             return new AddAuthorResponse()
             {
                 HttpStatusCode = HttpStatusCode.OK,
-                Author = result
+                Author = result,
             };
         }
 
-        public bool AddRange(IEnumerable<Author> addAuthors)
+        public async Task<bool> AddRange(IEnumerable<Author> addAuthors)
         {
-          return  authorInMemoryRepository.AddRange(addAuthors);
+          return await authorInMemoryRepository.AddRange(addAuthors);
         }
 
-        public Author? Delete(int id)
+        public async Task<Author?> Delete(int id)
         {
-            return authorInMemoryRepository.Delete(id);
+            if ((await bookRepository.GetAll()).Any(x=>x.AuthorId == id))
+            {
+                return null;
+            }
+            return await authorInMemoryRepository.Delete(id);
         }
 
-        public IEnumerable<Author> GetAll()
+        public async Task<IEnumerable<Author>> GetAll()
         {
-            return authorInMemoryRepository.GetAll();
+            return await authorInMemoryRepository.GetAll();
         }
 
-        public Author? GetById(int id)
+        public async Task<Author?> GetById(int id)
         {
-            return authorInMemoryRepository.GetById(id);
+            return await authorInMemoryRepository.GetById(id);
         }
 
-        public Author? GetByName(string name)
+        public async Task<Author?> GetByName(string name)
         {
-            return authorInMemoryRepository.GetByName(name);
+            return await authorInMemoryRepository.GetByName(name);
         }
 
-        public UpdateAuthorResponse Update(AuthorRequest authorRequest)
+        public async Task<UpdateAuthorResponse> Update(AuthorRequest authorRequest)
         {
-            var authorCheck = authorInMemoryRepository.GetById(authorRequest.Id);
+            var authorCheck = await authorInMemoryRepository.GetById(authorRequest.Id);
             if (authorCheck == null)
             {
                 return new UpdateAuthorResponse()
@@ -76,7 +82,7 @@ namespace ProjectDK.BL.Services
                 };
             }
             var author = mapper.Map<Author>(authorRequest);
-            authorInMemoryRepository.Update(author);
+            await authorInMemoryRepository.Update(author);
 
             return new UpdateAuthorResponse()
             {

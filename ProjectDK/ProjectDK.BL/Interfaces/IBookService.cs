@@ -6,14 +6,14 @@ namespace ProjectDK.BL.Interfaces
 {
     public interface IBookService
     {
-        IEnumerable<Book> GetAll();
+        Task<IEnumerable<Book>> GetAll();
 
-        Book? GetById(int id);
+        Task<Book?> GetById(int id);
 
-        BookResponse Add(BookRequest input);
+        Task<BookResponse> Add(BookRequest input);
 
-        BookResponse Update(BookRequest input);
+        Task<BookResponse> Update(BookRequest input);
 
-        Book? Delete(int id);
+        Task<Book?> Delete(int id);
     }
 }

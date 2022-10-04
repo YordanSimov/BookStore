@@ -6,18 +6,18 @@ namespace ProjectDK.BL.Interfaces
 {
     public interface IAuthorService
     {
-        IEnumerable<Author> GetAll();
+        Task<IEnumerable<Author>> GetAll();
 
-        Author? GetById(int id);
+        Task<Author?> GetById(int id);
 
-        Author? GetByName(string name);
+        Task<Author?> GetByName(string name);
 
-        AddAuthorResponse Add(AuthorRequest input);
+        Task<AddAuthorResponse> Add(AuthorRequest input);
 
-        UpdateAuthorResponse Update(AuthorRequest input);
+        Task<UpdateAuthorResponse> Update(AuthorRequest input);
 
-        Author? Delete(int id);
+        Task<Author?> Delete(int id);
 
-        bool AddRange(IEnumerable<Author> addAuthors);
+        Task<bool> AddRange(IEnumerable<Author> addAuthors);
     }
 }
