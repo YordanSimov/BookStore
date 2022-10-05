@@ -1,4 +1,6 @@
 ﻿using ProjectDK.Models.Models;
+using ProjectDK.Models.Requests;
+using ProjectDK.Models.Responses;
 
 namespace ProjectDK.BL.Interfaces
 {
@@ -8,10 +10,10 @@ namespace ProjectDK.BL.Interfaces
 
         Task<Person?> GetById(int id);
 
-        Task<Person> Add(Person person);
+        Task<PersonResponse> Add(PersonRequest person);
 
-        Task Update(Person person);
+        Task<PersonResponse> Update(PersonRequest person);
 
-        Task<Person?> Delete(int id);
+        Task<Person> Delete(int id);
     }
 }
