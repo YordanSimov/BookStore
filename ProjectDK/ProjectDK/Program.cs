@@ -1,6 +1,7 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using ProjectDK.Extensions;
+using ProjectDK.HealthChecks;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 
@@ -22,6 +23,9 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHealthChecks()
+    .AddCheck<TestHealthCheck>("Test")
+    .AddCheck<SQLHealthCheck>("SQL Server").AddUrlGroup(new Uri("https://google.com"),name: "Google Service");
 
 var app = builder.Build();
 
@@ -37,5 +41,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.RegisterHealthChecks();
 
 app.Run();
