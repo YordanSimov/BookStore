@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using ProjectDK.BL.Interfaces;
+using ProjectDK.BL.Services;
 using ProjectDK.Models.Models;
+using ProjectDK.Models.Requests;
+using System.Net;
 
 namespace ProjectDK.Controllers
 {
@@ -17,33 +20,69 @@ namespace ProjectDK.Controllers
             this.personService = personService;
         }
 
-        [HttpGet("Get")]
-        public async Task<IEnumerable<Person>> Get()
+        [HttpGet(nameof(GetAll))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetAll()
         {
-            return await personService.GetAll();
+            if ((await personService.GetAll()).Count() < 0)
+            {
+                return NotFound("There aren't any people in the collection");
+            }
+            return Ok(await personService.GetAll());
         }
         [HttpPost(nameof(Add))]
-        public async Task<Person?> Add(Person author)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Add(PersonRequest person)
         {
-            return await personService.Add(author);
+            var result = await personService.Add(person);
+
+            if (result.HttpStatusCode == HttpStatusCode.BadRequest)
+                return BadRequest(result);
+
+            return Ok(result);
         }
 
         [HttpGet(nameof(GetById))]
-        public async Task<Person?> GetById(int id)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetById(int id)
         {
-            return await personService.GetById(id);
+            if (id <= 0) return BadRequest("Id must be greater than 0");
+            var result = await personService.GetById(id);
+
+            if (result == null) return NotFound(id);
+
+            return Ok(result);
         }
 
         [HttpPut(nameof(Update))]
-        public async Task Update(Person author)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Update(PersonRequest person)
         {
-            await personService.Update(author);
+            if (person == null) return BadRequest("Person can't be null");
+
+            var result = await personService.Update(person);
+
+            if (result.HttpStatusCode == HttpStatusCode.NotFound)
+                return NotFound(result);
+
+            return Ok(result);
         }
 
         [HttpDelete(nameof(Delete))]
-        public async Task<Person?> Delete(int id)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> Delete(int id)
         {
-            return await personService.Delete(id);
+            if (id <= 0) return BadRequest("Id must be greater than 0");
+
+            var result = await personService.Delete(id);
+            return result == null ? NotFound(id) : Ok(result);
         }
     }
 }
