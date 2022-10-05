@@ -15,9 +15,9 @@ namespace ProjectDK.BL.Services
         private readonly IPersonRepository personRepository;
         private readonly IMapper mapper;
 
-        public PersonService(IPersonRepository personInMemoryRepository, IMapper mapper)
+        public PersonService(IPersonRepository personRepository, IMapper mapper)
         {
-            this.personRepository = personInMemoryRepository;
+            this.personRepository = personRepository;
             this.mapper = mapper;
         }
         public async Task<PersonResponse> Add(PersonRequest personRequest)
