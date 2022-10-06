@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using ProjectDK.BL.CommandHandlers;
 using ProjectDK.BL.Interfaces;
+using ProjectDK.Models.MediatR.Commands;
 using ProjectDK.Models.Models;
 using ProjectDK.Models.Requests;
 using System.Net;
@@ -12,17 +15,18 @@ namespace ProjectDK.Controllers
 
     public class AuthorController : ControllerBase
     {
-        private readonly IAuthorService authorService;
         private readonly ILogger<AuthorController> _logger;
         private readonly IMapper mapper;
+        private readonly IMediator mediator;
 
-        public AuthorController(IAuthorService authorService,
+        public AuthorController(
             ILogger<AuthorController> logger,
-            IMapper mapper)
+            IMapper mapper,
+            IMediator mediator)
         {
-            this.authorService = authorService;
             _logger = logger;
             this.mapper = mapper;
+            this.mediator = mediator;
         }
 
         [HttpGet(nameof(GetAll))]
@@ -31,7 +35,7 @@ namespace ProjectDK.Controllers
 
         public async Task<IActionResult> GetAll()
         {
-            var authors = await authorService.GetAll();
+            var authors = await mediator.Send(new GetAllAuthorsCommand());
             if (authors.Count() <= 0)
             {
                 return NotFound("There aren't any authors in the collection");
@@ -49,7 +53,7 @@ namespace ProjectDK.Controllers
 
         public async Task<IActionResult> Add(AuthorRequest author)
         {
-            var result = await authorService.Add(author);
+            var result = await mediator.Send(new AddAuthorCommand(author));
 
             try
             {
@@ -73,7 +77,7 @@ namespace ProjectDK.Controllers
 
             var authors = mapper.Map<IEnumerable<Author>>(addAuthors.Authors);
 
-            var result = await authorService.AddRange(authors);
+            var result = await mediator.Send(new AddAuthorRangeCommand(authors));
             if (!result) return BadRequest(result);
 
             return Ok(result);
@@ -96,7 +100,7 @@ namespace ProjectDK.Controllers
                 _logger.LogError(ex.Message);
             }
 
-            var result = await authorService.GetById(id);
+            var result = await mediator.Send(new GetByIdAuthorCommand(id));
 
             if (result == null) return NotFound(id);
 
@@ -121,7 +125,7 @@ namespace ProjectDK.Controllers
                 return BadRequest("Author can't be null");
             }
 
-            var result = await authorService.Update(author);
+            var result = await mediator.Send(new UpdateAuthorCommand(author));
 
             if (result.HttpStatusCode == HttpStatusCode.NotFound)
                 return NotFound(result);
@@ -144,7 +148,7 @@ namespace ProjectDK.Controllers
                 return BadRequest("Id must be greater than 0");
             }
 
-            var result = await authorService.Delete(id);
+            var result = await mediator.Send(new DeleteAuthorCommand(id));
             return result == null ? NotFound(id) : Ok(result);
         }
     }

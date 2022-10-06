@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
 using ProjectDK.BL.Interfaces;
 using ProjectDK.DL.Interfaces;
-using ProjectDK.DL.Repositories.MsSQL;
 using ProjectDK.Models.Models;
 using ProjectDK.Models.Requests;
 using ProjectDK.Models.Responses;
-using System;
 using System.Net;
 
 namespace ProjectDK.BL.Services
