@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
 using ProjectDK.BL.Interfaces;
 using ProjectDK.DL.Interfaces;
 using ProjectDK.Models.Models;
@@ -11,15 +12,17 @@ namespace ProjectDK.BL.Services
     public class AuthorService: IAuthorService
     {
         private readonly IAuthorRepository authorInMemoryRepository;
-        private readonly IMapper mapper;
         private readonly IBookRepository bookRepository;
+        private readonly IMapper mapper;
+        private readonly ILogger<AuthorService> logger;
 
 
-        public AuthorService(IAuthorRepository authorInMemoryRepository, IMapper mapper, IBookRepository bookRepository)
+        public AuthorService(IAuthorRepository authorInMemoryRepository, IMapper mapper, IBookRepository bookRepository, ILogger<AuthorService> logger)
         {
             this.authorInMemoryRepository = authorInMemoryRepository;
             this.mapper = mapper;
             this.bookRepository = bookRepository;
+            this.logger = logger;
         }
         public async Task<AddAuthorResponse> Add(AuthorRequest authorRequest)
         {
