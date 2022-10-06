@@ -25,11 +25,12 @@ namespace ProjectDK.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAll()
         {
-            if ((await bookService.GetAll()).Count() < 0)
+            var books = await bookService.GetAll();
+            if (books.Count() <= 0)
             {
                 return NotFound("There aren't any books in the collection");
             }
-            return Ok(await bookService.GetAll());
+            return Ok(books);
         }
         [HttpPost(nameof(Add))]
         [ProducesResponseType(StatusCodes.Status200OK)]

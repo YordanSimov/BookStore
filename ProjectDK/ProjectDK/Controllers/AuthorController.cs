@@ -31,7 +31,8 @@ namespace ProjectDK.Controllers
 
         public async Task<IActionResult> GetAll()
         {
-            if ((await authorService.GetAll()).Count() < 0)
+            var authors = await authorService.GetAll();
+            if (authors.Count() <= 0)
             {
                 return NotFound("There aren't any authors in the collection");
             }
@@ -39,7 +40,7 @@ namespace ProjectDK.Controllers
             _logger.LogWarning("Warning test");
             _logger.LogError("Error test");
             _logger.LogCritical("Critical test");
-            return Ok(await authorService.GetAll());
+            return Ok(authors);
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -53,7 +54,7 @@ namespace ProjectDK.Controllers
             try
             {
                 if (result.HttpStatusCode == HttpStatusCode.BadRequest)
-                    throw new HttpRequestException("Bad request");
+                    return BadRequest(author);
             }
             catch (Exception ex)
             {
@@ -117,6 +118,7 @@ namespace ProjectDK.Controllers
             catch (NullReferenceException ex)
             {
                 _logger.LogError(ex.Message);
+                return BadRequest("Author can't be null");
             }
 
             var result = await authorService.Update(author);
@@ -134,11 +136,12 @@ namespace ProjectDK.Controllers
         {
             try
             {
-                if (id <= 0) throw new ArgumentOutOfRangeException("Id is smaller than 0");
+                if (id <= 0) throw new ArgumentOutOfRangeException("Id should be greater than 0");
             }
             catch (ArgumentOutOfRangeException ex)
             {
                 _logger.LogError(ex.Message);
+                return BadRequest("Id must be greater than 0");
             }
 
             var result = await authorService.Delete(id);
