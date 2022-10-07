@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using ProjectDK.BL.Interfaces;
+using ProjectDK.Models.MediatR.Commands;
 using ProjectDK.Models.Requests;
 using System.Net;
 
@@ -10,14 +12,15 @@ namespace ProjectDK.Controllers
 
     public class BookController : ControllerBase
     {
-        private readonly IBookService bookService;
         private readonly ILogger<AuthorController> _logger;
+        private readonly IMediator mediator;
 
-        public BookController(IBookService bookService,
-            ILogger<AuthorController> logger)
+        public BookController(
+            ILogger<AuthorController> logger,
+            IMediator mediator)
         {
-            this.bookService = bookService;
             _logger = logger;
+            this.mediator = mediator;
         }
 
         [HttpGet(nameof(GetAll))]
@@ -25,7 +28,7 @@ namespace ProjectDK.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAll()
         {
-            var books = await bookService.GetAll();
+            var books = await mediator.Send(new GetAllBooksCommand());
             if (books.Count() <= 0)
             {
                 return NotFound("There aren't any books in the collection");
@@ -37,7 +40,7 @@ namespace ProjectDK.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Add(BookRequest book)
         {
-            var result = await bookService.Add(book);
+            var result = await mediator.Send(new AddBookCommand(book));
 
             if (result.HttpStatusCode == HttpStatusCode.BadRequest)
                 return BadRequest(result);
@@ -52,7 +55,7 @@ namespace ProjectDK.Controllers
         public async Task<IActionResult> GetById(int id)
         {
             if (id <= 0) return BadRequest("Id must be greater than 0");
-            var result = await bookService.GetById(id);
+            var result = await mediator.Send(new GetByIdBookCommand(id));
 
             if (result == null) return NotFound(id);
 
@@ -68,7 +71,7 @@ namespace ProjectDK.Controllers
         {
             if (book == null) return BadRequest("Book can't be null");
 
-            var result = await bookService.Update(book);
+            var result = await mediator.Send(new UpdateBookCommand(book));
 
             if (result.HttpStatusCode == HttpStatusCode.NotFound)
                 return NotFound(result);
@@ -84,7 +87,7 @@ namespace ProjectDK.Controllers
         {
             if (id <= 0) return BadRequest("Id must be greater than 0");
 
-            var result = await bookService.Delete(id);
+            var result = await mediator.Send(new DeleteBookCommand(id));
             return result == null ? NotFound(id) : Ok(result);
         }
     }

@@ -1,5 +1,7 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using MediatR;
+using ProjectDK.BL.CommandHandlers;
 using ProjectDK.Extensions;
 using ProjectDK.HealthChecks;
 using Serilog;
@@ -26,6 +28,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHealthChecks()
     .AddCheck<TestHealthCheck>("Test")
     .AddCheck<SQLHealthCheck>("SQL Server").AddUrlGroup(new Uri("https://google.com"),name: "Google Service");
+
+builder.Services.AddMediatR(typeof(GetAllBooksCommandHandler).Assembly);
+
 
 var app = builder.Build();
 

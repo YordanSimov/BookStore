@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using ProjectDK.BL.Interfaces;
-using ProjectDK.BL.Services;
-using ProjectDK.Models.Models;
 using ProjectDK.Models.Requests;
 using System.Net;
 
