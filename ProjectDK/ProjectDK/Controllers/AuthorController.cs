@@ -2,7 +2,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ProjectDK.BL.CommandHandlers;
-using ProjectDK.BL.Interfaces;
 using ProjectDK.Models.MediatR.Commands;
 using ProjectDK.Models.Models;
 using ProjectDK.Models.Requests;
@@ -47,9 +46,9 @@ namespace ProjectDK.Controllers
             return Ok(authors);
         }
 
+        [HttpPost(nameof(Add))]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [HttpPost(nameof(Add))]
 
         public async Task<IActionResult> Add(AuthorRequest author)
         {

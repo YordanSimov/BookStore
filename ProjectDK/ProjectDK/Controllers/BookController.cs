@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using ProjectDK.BL.Interfaces;
 using ProjectDK.Models.MediatR.Commands;
 using ProjectDK.Models.Requests;
 using System.Net;
