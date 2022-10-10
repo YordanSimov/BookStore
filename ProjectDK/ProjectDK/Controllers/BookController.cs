@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProjectDK.Models.MediatR.Commands;
 using ProjectDK.Models.Requests;
@@ -23,6 +24,7 @@ namespace ProjectDK.Controllers
         }
 
         [HttpGet(nameof(GetAll))]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAll()
@@ -49,6 +51,7 @@ namespace ProjectDK.Controllers
 
         [HttpGet(nameof(GetById))]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById(int id)

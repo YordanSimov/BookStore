@@ -18,7 +18,7 @@ namespace ProjectDK.Controllers
         }
 
         [HttpGet(nameof(GetEmployeeDetails))]
-        [Authorize(AuthenticationSchemes ="Bearer")]
+        [Authorize(AuthenticationSchemes = "Bearer", Policy = "View")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetEmployeeDetails()
@@ -47,6 +47,8 @@ namespace ProjectDK.Controllers
         [HttpGet("GetId")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize(AuthenticationSchemes = "Bearer", Policy = "Test")]
+
         public async Task<IActionResult> GetEmployeeDetails(int id)
         {
             if (id <= 0)

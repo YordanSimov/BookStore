@@ -1,36 +1,53 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using ProjectDK.BL.Interfaces;
-using ProjectDK.Models.Models.Users;
 using System.IdentityModel.Tokens.Jwt;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 using System.Security.Claims;
 using System.Text;
+using ProjectDK.Models.Requests;
+using Microsoft.AspNetCore.Authorization;
+using ProjectDK.Models.Models.Users;
+using ProjectDK.BL.Interfaces;
 
 namespace ProjectDK.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class TokenController : ControllerBase
+    public class IdentityController : ControllerBase
     {
         private readonly IConfiguration configuration;
-        private readonly IEmployeeService employeeService;
+        // private readonly IEmployeeService employeeService;
+        private readonly IIdentityService identityService;
 
-        public TokenController(IConfiguration configuration, IEmployeeService employeeService)
+        public IdentityController(IConfiguration configuration, IIdentityService identityService)
         {
             this.configuration = configuration;
-            this.employeeService = employeeService;
+            this.identityService = identityService;
         }
-        [HttpPost]
-        public async Task<IActionResult> Post(UserInfo userData)
+        [AllowAnonymous]
+        [HttpPost(nameof(CreateUser))]
+
+        public async Task<IActionResult> CreateUser([FromBody] UserInfo user)
         {
-            if (userData != null && !string.IsNullOrEmpty(userData.Email) && !string.IsNullOrEmpty(userData.Password))
+            if (string.IsNullOrEmpty(user.UserName) || string.IsNullOrEmpty(user.Password))
+                return BadRequest("Username or password is invalid");
+
+            var result = await identityService.CreateAsync(user);
+            return result.Succeeded ? Ok(result) : BadRequest(result);
+        }
+
+        [AllowAnonymous]
+        [HttpPost(nameof(Login))]
+        public async Task<IActionResult> Login(LoginRequest loginRequest)
+        {
+            if (loginRequest != null && !string.IsNullOrEmpty(loginRequest.UserName) && !string.IsNullOrEmpty(loginRequest.Password))
             {
-                var user = await employeeService.GetUserInfoAsync(userData.Email, userData.Password);
+                var user = await identityService.CheckUserAndPassword(loginRequest.UserName, loginRequest.Password);
 
                 if (user != null)
                 {
-                    var claims = new[]
+                    var userRoles = await identityService.GetUserRoles(user);
+                    var claims = new List<Claim>
                     {
                         new Claim(JwtRegisteredClaimNames.Sub,configuration.GetSection("Jwt:Subject").Value),
                         new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
@@ -39,7 +56,15 @@ namespace ProjectDK.Controllers
                         new Claim("DisplayName",user.DisplayName ?? String.Empty),
                         new Claim("Email",user.Email ?? String.Empty),
                         new Claim("UserName",user.UserName ?? String.Empty),
+                        new Claim("View","View"),
+                        new Claim("Test","Test")
                     };
+
+                    foreach (var role in userRoles)
+                    {
+                        claims.Add(new Claim(ClaimTypes.Role, role));
+                    }
+
                     var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
                     var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
                     var token = new JwtSecurityToken(configuration["Jwt:Issuer"],
@@ -47,7 +72,7 @@ namespace ProjectDK.Controllers
 
                     return Ok(new JwtSecurityTokenHandler().WriteToken(token));
                 }
-                    return BadRequest("Invalid credentials");
+                return BadRequest("Invalid credentials");
             }
             return NotFound("Missing username and/or password");
         }

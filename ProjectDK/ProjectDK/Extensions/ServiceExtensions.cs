@@ -20,6 +20,7 @@ namespace ProjectDK.Extensions
         {
             services.AddSingleton<IPersonService, PersonService>();
             services.AddSingleton<IEmployeeService, EmployeeService>();
+            services.AddTransient<IIdentityService, IdentityService>();
             return services;
         }
     }

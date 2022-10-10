@@ -5,9 +5,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ProjectDK.BL.CommandHandlers;
+using ProjectDK.DL.Repositories.MsSQL;
 using ProjectDK.Extensions;
 using ProjectDK.HealthChecks;
 using ProjectDK.Middleware;
+using ProjectDK.Models.Models.Users;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 using System.Text;
@@ -55,6 +57,19 @@ builder.Services.AddSwaggerGen(x =>
     });
 });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("View", policy =>
+    {
+        policy.RequireClaim("View");
+    });
+    options.AddPolicy("Test", policy =>
+    {
+        policy.RequireClaim("Test");
+    });
+});
+
+//Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -71,13 +86,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+//healthchecks
 builder.Services.AddHealthChecks()
     .AddCheck<TestHealthCheck>("Test")
     .AddCheck<SQLHealthCheck>("SQL Server")
     .AddUrlGroup(new Uri("https://google.com"), name: "Google Service");
 
+//MediatR
 builder.Services.AddMediatR(typeof(GetAllBooksCommandHandler).Assembly);
 
+// Identity
+builder.Services.AddIdentity<UserInfo, UserRole>()
+    .AddUserStore<UserInfoStore>()
+    .AddRoleStore<UserRoleStore>();
 
 var app = builder.Build();
 

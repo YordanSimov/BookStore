@@ -17,6 +17,5 @@ namespace ProjectDK.DL.Interfaces
         Task<bool> CheckEmployee(int id);
 
         Task<UserInfo?> GetUserInfoAsync(string email, string password);
-
     }
 }
