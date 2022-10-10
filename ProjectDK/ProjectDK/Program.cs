@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using ProjectDK.BL.Background;
 using ProjectDK.BL.CommandHandlers;
 using ProjectDK.DL.Repositories.MsSQL;
 using ProjectDK.Extensions;
@@ -99,6 +100,8 @@ builder.Services.AddMediatR(typeof(GetAllBooksCommandHandler).Assembly);
 builder.Services.AddIdentity<UserInfo, UserRole>()
     .AddUserStore<UserInfoStore>()
     .AddRoleStore<UserRoleStore>();
+
+builder.Services.AddHostedService<MyBackgroundService>();
 
 var app = builder.Build();
 
