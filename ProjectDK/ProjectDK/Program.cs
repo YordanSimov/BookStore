@@ -5,10 +5,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ProjectDK.BL.CommandHandlers;
+using ProjectDK.BL.Kafka;
 using ProjectDK.DL.Repositories.MsSQL;
 using ProjectDK.Extensions;
 using ProjectDK.HealthChecks;
 using ProjectDK.Middleware;
+using ProjectDK.Models.Configurations;
 using ProjectDK.Models.Models.Users;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
@@ -21,6 +23,13 @@ var logger = new LoggerConfiguration()
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.AddSerilog(logger);
+
+//Kafka
+builder.Services.Configure<KafkaProducerSettings>(builder
+    .Configuration.GetSection(nameof(KafkaProducerSettings)));
+
+builder.Services.Configure<KafkaConsumerSettings>(builder
+    .Configuration.GetSection(nameof(KafkaConsumerSettings)));
 
 builder.Services.AddFluentValidationAutoValidation()
     .AddFluentValidationClientsideAdapters();
@@ -99,6 +108,8 @@ builder.Services.AddMediatR(typeof(GetAllBooksCommandHandler).Assembly);
 builder.Services.AddIdentity<UserInfo, UserRole>()
     .AddUserStore<UserInfoStore>()
     .AddRoleStore<UserRoleStore>();
+
+builder.Services.AddHostedService<KafkaConsumerService<int, int>>();
 
 var app = builder.Build();
 

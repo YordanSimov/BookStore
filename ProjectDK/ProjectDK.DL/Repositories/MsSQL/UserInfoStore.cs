@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using ProjectDK.Models.Models.Users;
-using System.Data;
 using System.Data.SqlClient;
 
 namespace ProjectDK.DL.Repositories.MsSQL
