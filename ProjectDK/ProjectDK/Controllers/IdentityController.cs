@@ -16,7 +16,6 @@ namespace ProjectDK.Controllers
     public class IdentityController : ControllerBase
     {
         private readonly IConfiguration configuration;
-        // private readonly IEmployeeService employeeService;
         private readonly IIdentityService identityService;
 
         public IdentityController(IConfiguration configuration, IIdentityService identityService)

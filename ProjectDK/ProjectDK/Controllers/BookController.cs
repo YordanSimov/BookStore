@@ -24,7 +24,6 @@ namespace ProjectDK.Controllers
         }
 
         [HttpGet(nameof(GetAll))]
-        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAll()
@@ -36,6 +35,7 @@ namespace ProjectDK.Controllers
             }
             return Ok(books);
         }
+
         [HttpPost(nameof(Add))]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

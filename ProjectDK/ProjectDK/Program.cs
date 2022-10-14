@@ -5,12 +5,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ProjectDK.BL.CommandHandlers;
-using ProjectDK.BL.Kafka;
 using ProjectDK.DL.Repositories.MsSQL;
 using ProjectDK.Extensions;
 using ProjectDK.HealthChecks;
 using ProjectDK.Middleware;
 using ProjectDK.Models.Configurations;
+using ProjectDK.Models.Models;
 using ProjectDK.Models.Models.Users;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
@@ -39,6 +39,7 @@ builder.Services.AddValidatorsFromAssemblyContaining(typeof(Program));
 // Add services to the container.
 builder.Services.RegisterRepositories()
     .RegisterServices()
+    .RegisterHostedService<int,Book>()
     .AddAutoMapper(typeof(Program));
 
 builder.Services.AddControllers();
@@ -108,8 +109,6 @@ builder.Services.AddMediatR(typeof(GetAllBooksCommandHandler).Assembly);
 builder.Services.AddIdentity<UserInfo, UserRole>()
     .AddUserStore<UserInfoStore>()
     .AddRoleStore<UserRoleStore>();
-
-builder.Services.AddHostedService<KafkaConsumerService<int, int>>();
 
 var app = builder.Build();
 
