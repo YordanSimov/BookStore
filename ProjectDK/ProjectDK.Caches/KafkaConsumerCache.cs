@@ -1,17 +1,16 @@
 ﻿using Confluent.Kafka;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using ProjectDK.Models.Configurations;
 
-namespace ProjectDK.BL.Kafka
+namespace ProjectDK.Caches
 {
-    public class KafkaConsumerService<TKey, TValue> : IKafkaConsumerService<TKey, TValue>,IHostedService
+    public class KafkaConsumerCache<TKey, TValue> : IKafkaConsumerCache<TKey, TValue>
     {
         private readonly ConsumerConfig config;
         private readonly IConsumer<TKey, TValue> consumer;
         private readonly IOptionsMonitor<KafkaConsumerSettings> kafkaConsumerSettings;
 
-        public KafkaConsumerService(IOptionsMonitor<KafkaConsumerSettings> kafkaConsumerSettings)
+        public KafkaConsumerCache(IOptionsMonitor<KafkaConsumerSettings> kafkaConsumerSettings)
         {
             this.kafkaConsumerSettings = kafkaConsumerSettings;
             config = new ConsumerConfig()
@@ -19,32 +18,30 @@ namespace ProjectDK.BL.Kafka
                 BootstrapServers = kafkaConsumerSettings.CurrentValue.BootstrapServers,
                 GroupId = kafkaConsumerSettings.CurrentValue.GroupId,
                 AutoOffsetReset = AutoOffsetReset.Earliest
-};
+            };
             consumer = new ConsumerBuilder<TKey, TValue>(config)
-                .SetKeyDeserializer(new KafkaDeserializer<TKey>())
-                .SetValueDeserializer(new KafkaDeserializer<TValue>()).Build();
+                .SetKeyDeserializer(new KafkaCacheDeserializer<TKey>())
+                .SetValueDeserializer(new KafkaCacheDeserializer<TValue>()).Build();
+            CacheCollection = new List<TValue>();
         }
-        public void Consume()
+
+        public List<TValue> CacheCollection { get; set; }
+
+        public void Consume(CancellationToken cancellationToken)
         {
-            consumer.Subscribe("test2");
-            while (true)
+            while (!cancellationToken.IsCancellationRequested)
             {
-                var cr = consumer.Consume();
+                consumer.Subscribe($"{typeof(TValue).Name}Cache");
+                var cr = consumer.Consume(cancellationToken);
+                CacheCollection.Add(cr.Value);
 
                 Console.WriteLine($"Receiver msg with key:{cr.Message.Key} value:{cr.Message.Value}");
             }
         }
 
-        public Task StartAsync(CancellationToken cancellationToken)
+        public async Task<IEnumerable<TValue>> GetAllAsync()
         {
-            Task.Run(() => Consume());
-            return Task.CompletedTask;
-        }
-
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            consumer.Dispose();
-            return Task.CompletedTask;
+            return CacheCollection;
         }
     }
 }

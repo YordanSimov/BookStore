@@ -1,9 +1,9 @@
 ﻿using Confluent.Kafka;
 using MessagePack;
 
-namespace ProjectDK.BL.Kafka
+namespace ProjectDK.Caches
 {
-    public class KafkaDeserializer<T> : IDeserializer<T>
+    public class KafkaCacheDeserializer<T> : IDeserializer<T>
     {
         public T Deserialize(ReadOnlySpan<byte> data, bool isNull, SerializationContext context)
         {

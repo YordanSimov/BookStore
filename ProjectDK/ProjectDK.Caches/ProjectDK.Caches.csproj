@@ -7,16 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
     <PackageReference Include="Confluent.Kafka" Version="1.9.3" />
-    <PackageReference Include="MediatR" Version="11.0.0" />
     <PackageReference Include="MessagePack" Version="2.4.35" />
-    <PackageReference Include="Serilog.AspNetCore" Version="6.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ProjectDK.Caches\ProjectDK.Caches.csproj" />
-    <ProjectReference Include="..\ProjectDK.DL\ProjectDK.DL.csproj" />
+    <ProjectReference Include="..\ProjectDK.Models\ProjectDK.Models.csproj" />
   </ItemGroup>
 
 </Project>

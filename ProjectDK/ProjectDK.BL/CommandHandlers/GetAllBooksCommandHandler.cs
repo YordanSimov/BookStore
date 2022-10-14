@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using ProjectDK.DL.Interfaces;
+using ProjectDK.Caches;
 using ProjectDK.Models.MediatR.Commands;
 using ProjectDK.Models.Models;
 
@@ -7,17 +7,15 @@ namespace ProjectDK.BL.CommandHandlers
 {
     public class GetAllBooksCommandHandler : IRequestHandler<GetAllBooksCommand, IEnumerable<Book>>
     {
-        private readonly IBookRepository bookRepository;
+        private readonly IKafkaConsumerCache<int, Book> kafkaConsumer;
 
-        public GetAllBooksCommandHandler(IBookRepository bookRepository)
+        public GetAllBooksCommandHandler(IKafkaConsumerCache<int, Book> kafkaConsumer)
         {
-            this.bookRepository = bookRepository;
+            this.kafkaConsumer = kafkaConsumer;
         }
-
         public async Task<IEnumerable<Book>> Handle(GetAllBooksCommand request, CancellationToken cancellationToken)
         {
-
-            return await bookRepository.GetAll();
+            return await kafkaConsumer.GetAllAsync();
         }
     }
 }
