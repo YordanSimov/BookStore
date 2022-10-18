@@ -31,6 +31,10 @@ builder.Services.Configure<KafkaProducerSettings>(builder
 builder.Services.Configure<KafkaConsumerSettings>(builder
     .Configuration.GetSection(nameof(KafkaConsumerSettings)));
 
+//Mongo
+builder.Services.Configure<MongoDbSettings>(builder
+    .Configuration.GetSection(nameof(MongoDbSettings)));
+
 builder.Services.AddFluentValidationAutoValidation()
     .AddFluentValidationClientsideAdapters();
 

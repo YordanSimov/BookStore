@@ -2,6 +2,7 @@
 using ProjectDK.BL.Services;
 using ProjectDK.Caches;
 using ProjectDK.DL.Interfaces;
+using ProjectDK.DL.MongoRepositories;
 using ProjectDK.DL.Repositories.MsSQL;
 using ProjectDK.Models.Models;
 
@@ -15,14 +16,18 @@ namespace ProjectDK.Extensions
             services.AddSingleton<IBookRepository, BookRepository>();
             services.AddSingleton<IPersonRepository, PersonRepository>();
             services.AddSingleton<IEmployeeRepository, EmployeeRepository>();
+            services.AddSingleton<IPurchaseRepository, PurchaseRepository>();
+            services.AddSingleton<IShoppingCartRepository, ShoppingCartRepository>();
 
             return services;
         }
         public static IServiceCollection RegisterServices(this IServiceCollection services)
         {
             services.AddSingleton<IPersonService, PersonService>();
+            services.AddSingleton<IPurchaseService, PurchaseService>();
             services.AddSingleton<IEmployeeService, EmployeeService>();
             services.AddTransient<IIdentityService, IdentityService>();
+            services.AddSingleton<IShoppingCartService, ShoppingCartService>();
 
             return services;
         }
