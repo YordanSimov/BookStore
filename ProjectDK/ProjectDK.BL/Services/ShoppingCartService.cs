@@ -35,16 +35,6 @@ namespace ProjectDK.BL.Services
                 };
                 await shoppingCartRepository.AddToCart(shCart);
             }
-
-
-            //if (!dict.ContainsKey(userId))
-            //{
-            //    dict.Add(userId, new List<Book>() { book });
-            //}
-            //else
-            //{
-            //    dict[userId].Add(book);
-            //}
         }
 
         public async Task<bool> EmptyCart(int userId)
@@ -55,61 +45,16 @@ namespace ProjectDK.BL.Services
                 return true;
             }
             return false;
-
-            //    try
-            //    {
-            //        if (dict.ContainsKey(userId))
-            //        {
-            //            dict.Remove(userId);
-            //            return Task.CompletedTask;
-            //        }
-            //        else
-            //        {
-            //            throw new InvalidOperationException($"There is no shopping cart for {userId}");
-            //        }
-            //    }
-            //    catch (InvalidOperationException ex)
-            //    {
-            //        logger.LogError(ex.Message);
-            //    }
-            //    return null;
         }
 
         public async Task FinishPurchase(int userId)
         {
             await shoppingCartRepository.FinishPurchase(userId);
-
-            //if (dict.ContainsKey(userId))
-            //{
-            //    var list = new List<Book>();
-            //    foreach (var item in dict.FirstOrDefault(x => x.Key == userId).Value)
-            //    {
-            //        list.Add(item);
-            //    }
-
-            //    var purchase = new Purchase()
-            //    {
-            //        UserId = userId,
-            //        Books = list,
-            //        TotalMoney = list.Select(x => x.Price).Sum(),
-            //    };
-            //    await purchaseRepository.SavePurchase(purchase);
-            //}
         }
 
         public async Task<IEnumerable<Book>> GetContent(int userId)
         {
             return await shoppingCartRepository.GetContent(userId);
-            //if (dict.ContainsKey(userId))
-            //{
-            //    var list = new List<Book>();
-            //    foreach (var item in dict.FirstOrDefault(x => x.Key == userId).Value)
-            //    {
-            //        list.Add(item);
-            //    }
-            //    return list;
-            //}
-            // return Enumerable.Empty<Book>();
         }
 
         public async Task<ShoppingCart?> GetShoppingCart(int userId)
@@ -129,29 +74,6 @@ namespace ProjectDK.BL.Services
 
             await shoppingCartRepository.RemoveFromCart(shoppingCart);
             return cart;
-
-            //try
-            //{
-            //    if (dict.ContainsKey(userId))
-            //    {
-            //        var bookCheck = dict[userId].FirstOrDefault(x => x.Id == book.Id);
-
-            //        if (bookCheck != null)
-            //        {
-            //            dict[userId].Remove(bookCheck);
-            //            return Task.CompletedTask;
-            //        }
-            //        else
-            //        {
-            //            throw new NullReferenceException("Book to remove is invalid");
-            //        }
-            //    }
-            //}
-            //catch (NullReferenceException ex)
-            //{
-            //    logger.LogError(ex.Message);
-            //}
-            //return null;
         }
     }
 }
