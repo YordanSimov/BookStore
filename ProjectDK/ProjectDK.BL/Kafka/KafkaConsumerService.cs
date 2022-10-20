@@ -1,19 +1,20 @@
 ﻿using Confluent.Kafka;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using ProjectDK.Models.Configurations;
 
 namespace ProjectDK.BL.Kafka
 {
-    public class KafkaConsumerService<TKey, TValue> : IKafkaConsumerService<TKey, TValue>,IHostedService
+    public class KafkaConsumerService<TKey, TValue> : IKafkaConsumerService<TKey, TValue>
     {
         private readonly ConsumerConfig config;
-        private readonly IConsumer<TKey, TValue> consumer;
         private readonly IOptionsMonitor<KafkaConsumerSettings> kafkaConsumerSettings;
+        private readonly IConsumer<TKey, TValue> consumer;
+        private Action<TValue> action;
 
-        public KafkaConsumerService(IOptionsMonitor<KafkaConsumerSettings> kafkaConsumerSettings)
+        public KafkaConsumerService(IOptionsMonitor<KafkaConsumerSettings> kafkaConsumerSettings, Action<TValue> action)
         {
             this.kafkaConsumerSettings = kafkaConsumerSettings;
+            this.action = action;
             config = new ConsumerConfig()
             {
                 BootstrapServers = kafkaConsumerSettings.CurrentValue.BootstrapServers,
@@ -26,25 +27,12 @@ namespace ProjectDK.BL.Kafka
         }
         public void Consume()
         {
-            consumer.Subscribe("test2");
+            consumer.Subscribe($"{typeof(TValue).Name}Topic");
             while (true)
             {
                 var cr = consumer.Consume();
-
-                Console.WriteLine($"Receiver msg with key:{cr.Message.Key} value:{cr.Message.Value}");
+                action.Invoke(cr.Message.Value);
             }
-        }
-
-        public Task StartAsync(CancellationToken cancellationToken)
-        {
-            Task.Run(() => Consume());
-            return Task.CompletedTask;
-        }
-
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            consumer.Dispose();
-            return Task.CompletedTask;
         }
     }
 }
