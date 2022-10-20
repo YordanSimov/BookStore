@@ -43,7 +43,7 @@ builder.Services.AddValidatorsFromAssemblyContaining(typeof(Program));
 // Add services to the container.
 builder.Services.RegisterRepositories()
     .RegisterServices()
-    .RegisterHostedService<int,Book>()
+    .RegisterCache<int,Book>()
     .AddAutoMapper(typeof(Program));
 
 builder.Services.AddControllers();

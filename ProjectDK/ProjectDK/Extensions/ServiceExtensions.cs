@@ -1,4 +1,6 @@
-﻿using ProjectDK.BL.Interfaces;
+﻿using ProjectDK.BL.Dataflow;
+using ProjectDK.BL.Interfaces;
+using ProjectDK.BL.Kafka;
 using ProjectDK.BL.Services;
 using ProjectDK.Caches;
 using ProjectDK.DL.Interfaces;
@@ -29,10 +31,13 @@ namespace ProjectDK.Extensions
             services.AddTransient<IIdentityService, IdentityService>();
             services.AddSingleton<IShoppingCartService, ShoppingCartService>();
 
+            services.AddHostedService<PurchaseDataflow>();
+            services.AddHostedService<DeliveryDataflow>();
+
             return services;
         }
 
-        public static IServiceCollection RegisterHostedService<TKey,TValue>(this IServiceCollection services) where TValue : ICacheItem<TKey>
+        public static IServiceCollection RegisterCache<TKey, TValue>(this IServiceCollection services) where TValue : ICacheItem<TKey>
         {
             services.AddHostedService<KafkaCacheDistributor<TKey, TValue>>();
             services.AddSingleton<IKafkaConsumerCache<TKey, TValue>, KafkaConsumerCache<TKey, TValue>>();
