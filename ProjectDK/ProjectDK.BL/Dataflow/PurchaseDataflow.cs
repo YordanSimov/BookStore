@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using ProjectDK.BL.Interfaces;
 using ProjectDK.BL.Kafka;
 using ProjectDK.DL.Interfaces;
 using ProjectDK.Models.Configurations;
@@ -13,19 +14,31 @@ namespace ProjectDK.BL.Dataflow
         private readonly IBookRepository bookRepository;
         private readonly KafkaConsumerService<Guid, Purchase> kafkaConsumerService;
         private readonly IOptionsMonitor<KafkaConsumerSettings> kafkaConsumerSettings;
-
+        private readonly IAdditionalInfoProvider additionalInfoProvider;
         private TransformBlock<Purchase, IEnumerable<Book>> updateBlock;
         private ActionBlock<IEnumerable<Book>> addBlock;
 
         public PurchaseDataflow(IBookRepository bookRepository,
-            IOptionsMonitor<KafkaConsumerSettings> kafkaConsumerSettings)
+            IOptionsMonitor<KafkaConsumerSettings> kafkaConsumerSettings, IAdditionalInfoProvider additionalInfoProvider)
         {
             this.bookRepository = bookRepository;
             this.kafkaConsumerService = new KafkaConsumerService<Guid, Purchase>(kafkaConsumerSettings, HandlePurchase);
             this.kafkaConsumerSettings = kafkaConsumerSettings;
-            updateBlock = new TransformBlock<Purchase,IEnumerable<Book>>(async x =>
+            this.additionalInfoProvider = additionalInfoProvider;
+            updateBlock = new TransformBlock<Purchase, IEnumerable<Book>>(async purchase =>
             {
-               var result = await UpdateQuantity(x);
+                var taskList = new List<Task<string>>();
+                foreach (var book in purchase.Books.DistinctBy(x => x.AuthorId))
+                {
+                    var task = Task.Run(() => additionalInfoProvider.GetAdditionalInfo(book));
+                    taskList.Add(task);
+                }
+
+                var additionalInfos = await Task.WhenAll(taskList);
+                purchase.AdditionalInfo = additionalInfos;
+
+                var result = await UpdateQuantity(purchase);
+
                 return result;
             });
             addBlock = new ActionBlock<IEnumerable<Book>>(async result =>
