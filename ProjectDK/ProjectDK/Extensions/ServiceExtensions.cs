@@ -1,6 +1,5 @@
 ﻿using ProjectDK.BL.Dataflow;
 using ProjectDK.BL.Interfaces;
-using ProjectDK.BL.Kafka;
 using ProjectDK.BL.Services;
 using ProjectDK.Caches;
 using ProjectDK.DL.Interfaces;
@@ -30,6 +29,7 @@ namespace ProjectDK.Extensions
             services.AddSingleton<IEmployeeService, EmployeeService>();
             services.AddTransient<IIdentityService, IdentityService>();
             services.AddSingleton<IShoppingCartService, ShoppingCartService>();
+            services.AddSingleton<IAdditionalInfoProvider, AdditionalInfoProvider>();
 
             services.AddHostedService<PurchaseDataflow>();
             services.AddHostedService<DeliveryDataflow>();
